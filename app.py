@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -20,7 +20,6 @@ class Password(db.Model):
     username = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(100), nullable=False)
 
-# Create all database tables before the first request is handled
 @app.before_request
 def before_request():
     db.create_all()
@@ -34,11 +33,16 @@ def signup():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        
+        if User.query.filter_by(username=username).first():
+            flash('Username already taken. Please choose another.', 'danger')
+            return redirect(url_for('signup'))
+        
         hashed_password = generate_password_hash(password)
         new_user = User(username=username, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
-        flash('You have successfully signed up!', 'success')
+        flash('You have successfully signed up! Please log in.', 'success')
         return redirect(url_for('login'))
     return render_template('signup.html')
 
@@ -48,18 +52,26 @@ def login():
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
-        if user:
-            if check_password_hash(user.password, password):
-                flash('Login successful!', 'success')
-                return redirect(url_for('index'))
-            else:
-                flash('Incorrect password. Please try again.', 'danger')
+        if user and check_password_hash(user.password, password):
+            session['user_id'] = user.id
+            session['username'] = user.username
+            flash('Login successful!', 'success')
+            return redirect(url_for('home'))
         else:
-            flash('User not found. Please sign up.', 'danger')
+            flash('Invalid username or password. Please try again.', 'danger')
     return render_template('login.html')
+
+@app.route('/home')
+def home():
+    if 'user_id' not in session:
+        flash('Please log in to access this page.', 'danger')
+        return redirect(url_for('login'))
+    return render_template('home.html', username=session['username'])
 
 @app.route('/logout')
 def logout():
+    session.pop('user_id', None)
+    session.pop('username', None)
     flash('You have been logged out', 'info')
     return redirect(url_for('index'))
 

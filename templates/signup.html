@@ -4,17 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <div class="container">
+    <div class="container mt-5">
         <h2>Sign Up</h2>
         <form action="{{ url_for('signup') }}" method="POST">
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <input type="submit" value="Sign Up">
+            <div class="form-group">
+                <input type="text" class="form-control" name="username" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                <div id="password-strength" class="mt-2"></div>
+            </div>
+            <button type="submit" class="btn btn-primary">Sign Up</button>
         </form>
-        <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+        <p class="mt-3">Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
     </div>
+    <script>
+        $(document).ready(function() {
+            $('#password').on('input', function() {
+                var password = $(this).val();
+                var strength = 'Weak';
+                var color = 'red';
+                if (password.length >= 8) {
+                    var regex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])");
+                    if (regex.test(password)) {
+                        strength = 'Strong';
+                        color = 'green';
+                    } else {
+                        strength = 'Medium';
+                        color = 'orange';
+                    }
+                }
+                $('#password-strength').text('Password strength: ' + strength).css('color', color);
+            });
+        });
+    </script>
 </body>
 </html>
