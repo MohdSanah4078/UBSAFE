@@ -6,6 +6,23 @@ body {
     max-width: 600px;
 }
 
-#password-strength {
+.alert {
+    margin-top: 10px;
+}
+
+.password-strength {
     font-weight: bold;
+    margin-top: 5px;
+}
+
+.weak {
+    color: red;
+}
+
+.medium {
+    color: orange;
+}
+
+.strong {
+    color: green;
 }
