@@ -5,12 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .password-field {
+            display: inline-block;
+            width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding-top: 20px;
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+        }
+        .content {
+            margin-left: 200px;
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h2>Welcome, {{ username }}</h2>
-        <a href="{{ url_for('add_password') }}" class="btn btn-primary mb-3">Add New Password</a>
-        <table class="table table-bordered">
+    <div class="sidebar">
+        <h4 class="text-center">UB SAFE</h4>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="{{ url_for('home') }}">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('add_password') }}">Add Password</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+            </li>
+        </ul>
+    </div>
+    <div class="content">
+        <h2>Home</h2>
+        <table class="table">
             <thead>
                 <tr>
                     <th>Website</th>
@@ -24,16 +59,30 @@
                 <tr>
                     <td>{{ password.website }}</td>
                     <td>{{ password.username }}</td>
-                    <td>{{ password.password }}</td>
+                    <td>
+                        <span class="password-field" id="password-{{ password.id }}">••••••••</span>
+                        <button class="btn btn-sm btn-secondary" onclick="togglePasswordVisibility({{ password.id }}, '{{ password.password }}')">Show</button>
+                    </td>
                     <td>
                         <a href="{{ url_for('edit_password', id=password.id) }}" class="btn btn-warning btn-sm">Edit</a>
-                        <a href="{{ url_for('delete_password', id=password.id) }}" class="btn btn-danger btn-sm">Delete</a>
+                        <form action="{{ url_for('delete_password', id=password.id) }}" method="POST" style="display:inline-block;">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
-        <a href="{{ url_for('logout') }}" class="btn btn-secondary mt-3">Logout</a>
     </div>
+    <script>
+        function togglePasswordVisibility(id, password) {
+            var passwordField = document.getElementById('password-' + id);
+            if (passwordField.textContent === '••••••••') {
+                passwordField.textContent = password;
+            } else {
+                passwordField.textContent = '••••••••';
+            }
+        }
+    </script>
 </body>
 </html>
