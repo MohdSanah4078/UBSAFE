@@ -110,6 +110,7 @@ def edit_password(id):
 
 
 
+
 @app.route('/delete_password/<int:id>', methods=['POST'])
 def delete_password(id):
     if 'user_id' not in session:

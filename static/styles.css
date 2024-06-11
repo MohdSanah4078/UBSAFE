@@ -1,28 +1,67 @@
+/* Basic body styles */
 body {
-    font-family: Arial, sans-serif;
+    background-color: #333333; /* Dark charcoal */
+    color: #f8f9fa; /* Light gray for text */
+    font-family: Arial, sans-serif; /* Ensuring a clean, modern font is used */
 }
 
-.container {
-    max-width: 600px;
+/* Container styles for any divs that need a distinct background */
+.container, .sidebar, .content {
+    background-color: #424242; /* Slightly lighter shade of charcoal */
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
 }
 
-.alert {
-    margin-top: 10px;
+/* All button styles */
+.btn {
+    color: #ffffff; /* White text */
+    border: none; /* No border */
 }
 
-.password-strength {
-    font-weight: bold;
-    margin-top: 5px;
+.btn-primary {
+    background-color: #1abc9c; /* Teal background for primary buttons */
 }
 
-.weak {
-    color: red;
+.btn-primary:hover {
+    background-color: #16a085; /* A darker teal for hover effects */
 }
 
-.medium {
-    color: orange;
+.btn-secondary {
+    background-color: #595959; /* Dark grey for secondary buttons */
 }
 
-.strong {
-    color: green;
+.btn-secondary:hover {
+    background-color: #6e6e6e; /* A lighter grey for hover effects */
+}
+
+/* Navigation links */
+.nav-link {
+    color: #1abc9c; /* Teal color for navigation links */
+}
+
+.nav-link:hover {
+    color: #108670; /* Darker teal for hover effects */
+}
+
+/* Form inputs */
+.form-control {
+    background-color: #333333; /* Matching the body background */
+    color: #ffffff; /* White text */
+    border: 1px solid #4d4d4d; /* Dark border for better visibility */
+}
+
+.form-control:focus {
+    border-color: #1abc9c; /* Teal border for focus */
+    box-shadow: 0 0 0 0.2rem rgba(26, 188, 156, 0.25); /* Subtle glow */
+}
+
+/* Tables */
+.table {
+    background-color: #424242; /* Dark background for tables */
+    color: #ffffff; /* White text */
+}
+
+th, td {
+    border-color: #333333; /* Dark borders to keep the theme uniform */
 }
