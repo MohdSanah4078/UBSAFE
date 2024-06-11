@@ -62,9 +62,10 @@ def login():
 
 @app.route('/logout')
 def logout():
-    session.pop('user_id', None)
-    flash('You have been logged out.', 'info')
-    return redirect(url_for('login'))
+    session.clear()  # or use session.pop('user_id', None) if you are storing user_id in session
+    flash('You have been logged out', 'info')
+    return redirect(url_for('index'))
+
 
 @app.route('/home')
 def home():
@@ -95,17 +96,19 @@ def add_password():
 @app.route('/edit_password/<int:id>', methods=['GET', 'POST'])
 def edit_password(id):
     if 'user_id' not in session:
-        flash('Please log in to access this page.', 'warning')
+        flash('Please log in to edit a password.', 'warning')
         return redirect(url_for('login'))
-    password_entry = Password.query.get_or_404(id)
+    password = Password.query.get_or_404(id)
     if request.method == 'POST':
-        password_entry.website = request.form['website']
-        password_entry.username = request.form['username']
-        password_entry.password = request.form['password']
+        password.website = request.form['website']
+        password.username = request.form['username']
+        password.password = request.form['password']
         db.session.commit()
         flash('Password updated successfully!', 'success')
-        return redirect(url_for('home'))
-    return render_template('edit_password.html', password=password_entry)
+        return redirect(url_for('index'))
+    return render_template('edit_password.html', password=password)
+
+
 
 @app.route('/delete_password/<int:id>', methods=['POST'])
 def delete_password(id):

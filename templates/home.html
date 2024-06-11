@@ -26,6 +26,9 @@
             margin-left: 200px;
             padding: 20px;
         }
+        .input-group-text {
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -45,6 +48,7 @@
     </div>
     <div class="content">
         <h2>Home</h2>
+        <a href="{{ url_for('add_password') }}" class="btn btn-primary mb-3">Add Password</a>
         <table class="table">
             <thead>
                 <tr>
@@ -58,10 +62,24 @@
                 {% for password in passwords %}
                 <tr>
                     <td>{{ password.website }}</td>
-                    <td>{{ password.username }}</td>
                     <td>
-                        <span class="password-field" id="password-{{ password.id }}">••••••••</span>
-                        <button class="btn btn-sm btn-secondary" onclick="togglePasswordVisibility({{ password.id }}, '{{ password.password }}')">Show</button>
+                        <div class="input-group">
+                            <input type="text" class="form-control" value="{{ password.username }}" id="username-{{ password.id }}" readonly>
+                            <div class="input-group-append">
+                                <span class="input-group-text" onclick="copyToClipboard('username-{{ password.id }}')">Copy</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <input type="password" class="form-control" value="{{ password.password }}" id="password-{{ password.id }}" readonly>
+                            <div class="input-group-append">
+                                <span class="input-group-text" onclick="copyToClipboard('password-{{ password.id }}')">Copy</span>
+                            </div>
+                            <div class="input-group-append">
+                                <span class="input-group-text" onclick="togglePasswordVisibility('password-{{ password.id }}')">Show</span>
+                            </div>
+                        </div>
                     </td>
                     <td>
                         <a href="{{ url_for('edit_password', id=password.id) }}" class="btn btn-warning btn-sm">Edit</a>
@@ -75,14 +93,39 @@
         </table>
     </div>
     <script>
-        function togglePasswordVisibility(id, password) {
-            var passwordField = document.getElementById('password-' + id);
-            if (passwordField.textContent === '••••••••') {
-                passwordField.textContent = password;
+        function copyToClipboard(id) {
+            var copyText = document.getElementById(id);
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); /* For mobile devices */
+            document.execCommand("copy");
+            alert("Copied the text: " + copyText.value);
+        }
+
+        function togglePasswordVisibility(id) {
+            var passwordField = document.getElementById(id);
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                passwordField.nextElementSibling.nextElementSibling.textContent = "Hide";
             } else {
-                passwordField.textContent = '••••••••';
+                passwordField.type = "password";
+                passwordField.nextElementSibling.nextElementSibling.textContent = "Show";
             }
         }
+
+        let timeout;
+
+        function resetTimeout() {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                window.location.href = "{{ url_for('logout') }}";
+            }, 1 * 60 * 1000);  // 5 minutes
+        }
+
+        window.onload = resetTimeout;
+        window.onmousemove = resetTimeout;
+        window.onkeypress = resetTimeout;
+        window.onscroll = resetTimeout;
+        window.onclick = resetTimeout;
     </script>
 </body>
 </html>
