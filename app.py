@@ -108,9 +108,6 @@ def edit_password(id):
         return redirect(url_for('index'))
     return render_template('edit_password.html', password=password)
 
-
-
-
 @app.route('/delete_password/<int:id>', methods=['POST'])
 def delete_password(id):
     if 'user_id' not in session:
@@ -121,6 +118,7 @@ def delete_password(id):
     db.session.commit()
     flash('Password deleted successfully!', 'success')
     return redirect(url_for('home'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
