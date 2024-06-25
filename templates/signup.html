@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UB SAFE</title>
+    <title>UB SAFE - Sign Up</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="D:\Downloads\Password_Manager\static\styles.css" rel="stylesheet"> 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
@@ -14,27 +13,46 @@
                 var password = $(this).val();
                 var strength = 'Weak';
                 var colorClass = 'weak';
+                var strengthPercent = 0;
+
                 if (password.length >= 8) {
-                    // Regular expression to check for a combination of lowercase, uppercase, digits, and special characters
-                    var regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-                    if (regex.test(password)) {
+                    strength = 'Medium';
+                    colorClass = 'medium';
+                    strengthPercent = 50;
+
+                    if (password.length >= 12) {
                         strength = 'Strong';
                         colorClass = 'strong';
-                    } else {
-                        strength = 'Medium';
-                        colorClass = 'medium';
+                        strengthPercent = 100;
+                    } else if (password.length >= 10) {
+                        strengthPercent = 75;
                     }
-                    // Show the password strength meter once the user starts typing
-                    $('#password-strength').removeClass().addClass('password-strength').addClass(colorClass).removeClass('d-none').text('Password strength: ' + strength);
-                } else {
-                    // Hide the password strength meter if the password is empty or less than 8 characters long
-                    $('#password-strength').addClass('d-none');
+                }
+
+                $('#password-strength').removeClass().addClass('password-strength ' + colorClass).text('Password strength: ' + strength);
+                $('#strength-bar').css('width', strengthPercent + '%').removeClass().addClass('progress-bar ' + colorClass);
+                
+                if (password.length < 8) {
+                    $('#password-strength').text('Password strength: Weak').removeClass('medium strong').addClass('weak');
+                    $('#strength-bar').css('width', '0%').removeClass('medium-bar strong-bar').addClass('weak-bar');
                 }
             });
         });
+
+        function togglePasswordVisibility(id) {
+            var passwordInput = document.getElementById(id);
+            var button = passwordInput.nextElementSibling.querySelector('button');
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                button.textContent = "Hide";
+            } else {
+                passwordInput.type = "password";
+                button.textContent = "Show";
+            }
+        }
     </script>
     <style>
-         body {
+        body {
             background-color: #333; /* Dark charcoal for the body background */
             color: #f8f9fa; /* Light color for text for good contrast */
         }
@@ -81,6 +99,35 @@
         th, td {
             border-color: #333; /* Dark borders for table cells */
         }
+        .password-strength {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .weak {
+            color: red;
+        }
+        .medium {
+            color: orange;
+        }
+        .strong {
+            color: green;
+        }
+        .progress {
+            height: 5px;
+            margin-top: 5px;
+        }
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+        .weak-bar {
+            background-color: red;
+        }
+        .medium-bar {
+            background-color: orange;
+        }
+        .strong-bar {
+            background-color: green;
+        }
     </style>
 </head>
 <body>
@@ -92,10 +139,18 @@
                 <input type="text" class="form-control" name="username" placeholder="Username" required>
             </div>
             <div class="form-group">
-                <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+                <div class="input-group">
+                    <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-secondary" onclick="togglePasswordVisibility('password')">Show</button>
+                    </div>
+                </div>
+                <div class="progress">
+                    <div id="strength-bar" class="progress-bar" role="progressbar" style="width: 0;"></div>
+                </div>
             </div>
-            <!-- Password strength meter (initially hidden) -->
-            <div id="password-strength" class="password-strength d-none"></div>
+            <!-- Password strength meter -->
+            <div id="password-strength" class="password-strength"></div>
             <button type="submit" class="btn btn-primary">Sign Up</button>
         </form>
         <p class="mt-3">Already have an account? <a href="{{ url_for('login') }}">Login</a></p>

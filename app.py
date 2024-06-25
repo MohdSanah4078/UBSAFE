@@ -24,8 +24,7 @@ class Password(db.Model):
 # Ensure tables are created
 @app.before_request
 def create_tables():
-    if not os.path.exists('passwords.db'):
-        db.create_all()
+    db.create_all()
 
 @app.route('/')
 def index():
@@ -38,6 +37,11 @@ def signup():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        # Check if the user already exists
+        existing_user = User.query.filter_by(username=username).first()
+        if existing_user:
+            flash('Username already exists. Please choose a different username.', 'danger')
+            return redirect(url_for('signup'))
         hashed_password = generate_password_hash(password)
         new_user = User(username=username, password=hashed_password)
         db.session.add(new_user)
@@ -56,16 +60,14 @@ def login():
             session['user_id'] = user.id
             flash('Login successful!', 'success')
             return redirect(url_for('home'))
-        else:
-            flash('Incorrect username or password.', 'danger')
+        flash('Incorrect username or password.', 'danger')
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
-    session.clear()  # or use session.pop('user_id', None) if you are storing user_id in session
+    session.clear()
     flash('You have been logged out', 'info')
     return redirect(url_for('index'))
-
 
 @app.route('/home')
 def home():
@@ -105,7 +107,7 @@ def edit_password(id):
         password.password = request.form['password']
         db.session.commit()
         flash('Password updated successfully!', 'success')
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
     return render_template('edit_password.html', password=password)
 
 @app.route('/delete_password/<int:id>', methods=['POST'])
@@ -118,7 +120,6 @@ def delete_password(id):
     db.session.commit()
     flash('Password deleted successfully!', 'success')
     return redirect(url_for('home'))
-
 
 if __name__ == '__main__':
     app.run(debug=True)

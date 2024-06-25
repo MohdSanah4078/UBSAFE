@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-         body {
+        body {
             background-color: #333; /* Dark charcoal for the body background */
             color: #f8f9fa; /* Light color for text for good contrast */
         }
@@ -65,11 +65,29 @@
                 <input type="text" class="form-control" name="username" placeholder="Username" required>
             </div>
             <div class="form-group">
-                <input type="password" class="form-control" name="password" placeholder="Password" required>
+                <div class="input-group">
+                    <input type="password" class="form-control" name="password" id="login-password" placeholder="Password" required>
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-secondary" onclick="togglePasswordVisibility('login-password')">Show</button>
+                    </div>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary">Login</button>
         </form>
         <p class="mt-3">Don't have an account? <a href="{{ url_for('signup') }}">Sign Up</a></p>
     </div>
+    <script>
+        function togglePasswordVisibility(id) {
+            var passwordInput = document.getElementById(id);
+            var button = passwordInput.nextElementSibling.querySelector('button');
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                button.textContent = "Hide";
+            } else {
+                passwordInput.type = "password";
+                button.textContent = "Show";
+            }
+        }
+    </script>
 </body>
 </html>
