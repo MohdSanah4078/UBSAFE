@@ -35,6 +35,7 @@ def index():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
+        # Get form data
         username = request.form['username']
         password = request.form['password']
         # Check if the user already exists
@@ -42,8 +43,11 @@ def signup():
         if existing_user:
             flash('Username already exists. Please choose a different username.', 'danger')
             return redirect(url_for('signup'))
+            # Hash the password
         hashed_password = generate_password_hash(password)
+        # Create a new user instance
         new_user = User(username=username, password=hashed_password)
+        # Add the new user to the database
         db.session.add(new_user)
         db.session.commit()
         flash('You have successfully signed up!', 'success')
